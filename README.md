@@ -21,3 +21,9 @@ https://www.pollin.de/p/google-aiy-voice-kit-fuer-raspberry-pi-3-b-810883
 * you'll need to set up pulseaudio as a systemwide service -> https://possiblelossofprecision.net/?p=1956
 * the user pi needs to have access to audio and gpio
 * `sudo usermod -a -G audio,pulse,pulse-access,gpio pi`
+
+##  Alternative
+
+* If you don't want to use the Google Voice Kit raspi image, you can alternatively download and flash e.g. the Raspbian stretch and manually install the necessary dependencies
+* Raspbian stretch: https://downloads.raspberrypi.org/raspbian_full_latest
+* Log on to Raspbian and issue this to install pulseaudio 'sudo apt-get install pulseaudio'
