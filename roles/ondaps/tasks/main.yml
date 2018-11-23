@@ -1,0 +1,53 @@
+---
+- group:
+    state: present
+    name: "{{ ondaps_user }}"
+- user:
+    state: present
+    name: "{{ ondaps_user }}"
+    group: "{{ ondaps_user }}"
+    groups: "pulse,pulse-access,audio,gpio"
+- name: create ondaps working dir
+  file:
+    state: directory
+    path: "{{ ondaps_path }}"
+    owner: "{{ ondaps_user }}"
+    group: "{{ ondaps_user }}"
+- name: copy ondaps files
+  copy:
+    src: "{{ item }}"
+    dest: "{{ ondaps_path }}/{{ item }}"
+    owner: "{{ ondaps_user }}"
+    group: "{{ ondaps_user }}"
+  notify: restart ondaps
+  with_items:
+    - mic.py
+    - led.py
+    - fart.wav
+- name: copy ondaps config
+  template:
+    src: micpyconfig.ini
+    dest: "{{ ondaps_path}}/micpyconfig.ini"
+  notify: restart ondaps
+- name: copy ondaps service file
+  template:
+    src: systemd/ondaps.service
+    dest: /etc/systemd/system/ondaps.service
+  notify: restart ondaps
+- git:
+    repo: https://github.com/google/aiyprojects-raspbian.git
+    dest: "{{ ondaps_path }}/aiy"
+    version: 'v20181116'
+    update: no
+- lineinfile:
+    path: "{{ ondaps_path }}/aiy/src/setup.py"
+    regexp: '(.*)google-assistant-library==1.0.1(.*)'
+    line: '\1google-assistant-library==1.0.0\2'
+    backrefs: yes
+- pip:
+    executable: pip3
+    name:
+      - pyalsaaudio==0.8.4
+      - file://{{ ondaps_path }}/aiy/src
+  become: yes
+  become_user: "{{ ondaps_user }}"

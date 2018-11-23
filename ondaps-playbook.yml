@@ -1,0 +1,6 @@
+---
+  - hosts: ondaps
+    become: yes
+    roles:
+      - pulseaudio
+      - ondaps

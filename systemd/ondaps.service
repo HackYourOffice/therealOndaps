@@ -3,8 +3,9 @@ Description=Fart loudness detector
 
 [Service]
 Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
-ExecStart=/usr/bin/python3 /home/pi/mic.py
-User=pi
-Group=pi
+ExecStart=/usr/bin/python3 {{ ondaps_path }}/mic.py
+WorkingDirectory={{ ondaps_path }}
+User={{ ondaps_user }}
+Group={{ ondaps_user }}
 [Install]
 WantedBy=multi-user.target

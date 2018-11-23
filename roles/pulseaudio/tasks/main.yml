@@ -1,0 +1,35 @@
+---
+- name: copy pulseaudio service file
+  copy:
+    src: systemd/pulseaudio.service
+    dest: /etc/systemd/system/pulseaudio.service
+  notify: restart pulseaudio
+- lineinfile:
+    path: /etc/pulse/client.conf
+    regexp: '^default-server ='
+    line: 'default-server = /var/run/pulse/native'
+  notify: restart pulseaudio
+- lineinfile:
+    path: /etc/pulse/client.conf
+    regexp: '^autospawn ='
+    line: 'autospawn = no'
+  notify: restart pulseaudio
+- lineinfile:
+    path: /etc/pulse/system.pa
+    regexp: '^load-module module-native-protocol-unix'
+    line: 'load-module module-native-protocol-unix auth-anonymous=1'
+  notify: restart pulseaudio
+
+- block:
+    - name: check for orphaned running pulseaudio processes
+      shell: "ps aux | grep pulseaudio | grep -v grep | grep -v ^pulse | awk '{print $2}'"
+      register: running_processes
+      changed_when: running_processes.stdout_lines|length > 0
+
+    - shell: "kill {{ item }}"
+      with_items: "{{ running_processes.stdout_lines }}"
+
+    - wait_for:
+        path: "/proc/{{ item }}/status"
+        state: absent
+      with_items: "{{ running_processes.stdout_lines }}"
