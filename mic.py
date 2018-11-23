@@ -7,9 +7,21 @@
 ##
 ## To test it out, run it and shout at your microphone:
 
-import alsaaudio, time, audioop, os
+import alsaaudio, time, audioop, os, configparser
 from aiy.voice.audio import play_wav
 from aiy.board import Board, Led
+
+
+
+# Config block
+print("Reading Config")
+Config = configparser.ConfigParser()
+Config.read("micpyconfig.ini")
+config_sound = Config.get('Audio', 'Soundfile')
+print("Configured sound file: " + config_sound)
+print("Configuration finished")
+
+print("Waiting for voice input...")
 
 # Open the device in nonblocking capture mode. The last argument could
 # just as well have been zero for blocking mode. Then we could have
@@ -38,7 +50,7 @@ while True:
             # Return the maximum of the absolute value of all samples in a fragment.
             if audioop.max(data, 2) > 600:
                 board.led.state = Led.ON
-                play_wav(os.path.expanduser('~/fart.wav'))
+                play_wav(os.path.expanduser(config_sound))
                 board.led.state = Led.OFF
                 while l:
                     l,data = inp.read()
