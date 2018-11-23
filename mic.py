@@ -7,7 +7,7 @@
 ##
 ## To test it out, run it and shout at your microphone:
 
-import alsaaudio, time, audioop, os, configparser
+import alsaaudio, audioop, os, configparser
 from aiy.voice.audio import play_wav
 from aiy.board import Board
 from led import *
