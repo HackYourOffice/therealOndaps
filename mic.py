@@ -55,7 +55,7 @@ while True:
             if audioop.max(data, 2) > config_noise_volume_threshold:
                 counter += 1
                 if counter >= config_noise_length_threshold * 10:
-                    counter = 0
+                    counter /= 2
                     led_on(board)
                     play_wav(os.path.expanduser(config_sound))
                     led_off(board)
