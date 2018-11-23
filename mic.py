@@ -41,20 +41,25 @@ inp.setformat(alsaaudio.PCM_FORMAT_S16_LE)
 # This means that the reads below will return either 320 bytes of data
 # or 0 bytes of data. The latter is possible because we are in nonblocking
 # mode.
-inp.setperiodsize(4000)
+inp.setperiodsize(800)
 board = Board()
-
 led_blink(board, 0.5, 2)
-
+counter = 0
 while True:
         # Read data from device
         l,data = inp.read()
         if l:
             # Return the maximum of the absolute value of all samples in a fragment.
             if audioop.max(data, 2) > 600:
-                led_on(board)
-                play_wav(os.path.expanduser(config_sound))
-                led_off(board)
-                while l:
-                    l,data = inp.read()
+                counter += 1
+                if counter >= 20:
+                    counter = 0
+                    led_on(board)
+                    play_wav(os.path.expanduser(config_sound))
+                    led_off(board)
+                    while l:
+                       l,data = inp.read()
+            else:
+                if counter > 0:
+                    counter -= 1
         time.sleep(.001)
