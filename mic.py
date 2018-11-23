@@ -18,6 +18,8 @@ from led import *
 print("Reading Config")
 Config = configparser.ConfigParser()
 Config.read("micpyconfig.ini")
+config_noise_volume_threshold = int(Config.get('Noise', 'VolumeThreshold'))
+config_noise_length_threshold = int(Config.get('Noise', 'LengthThreshold'))
 config_sound = Config.get('Audio', 'Soundfile')
 print("Configured sound file: " + config_sound)
 print("Configuration finished")
@@ -50,9 +52,9 @@ while True:
         l,data = inp.read()
         if l:
             # Return the maximum of the absolute value of all samples in a fragment.
-            if audioop.max(data, 2) > 600:
+            if audioop.max(data, 2) > config_noise_volume_threshold:
                 counter += 1
-                if counter >= 20:
+                if counter >= config_noise_length_threshold * 10:
                     counter = 0
                     led_on(board)
                     play_wav(os.path.expanduser(config_sound))
