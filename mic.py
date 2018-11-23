@@ -9,7 +9,8 @@
 
 import alsaaudio, time, audioop, os, configparser
 from aiy.voice.audio import play_wav
-from aiy.board import Board, Led
+from aiy.board import Board
+from led import *
 
 
 
@@ -43,15 +44,17 @@ inp.setformat(alsaaudio.PCM_FORMAT_S16_LE)
 inp.setperiodsize(4000)
 board = Board()
 
+led_blink(board, 0.5, 2)
+
 while True:
         # Read data from device
         l,data = inp.read()
         if l:
             # Return the maximum of the absolute value of all samples in a fragment.
             if audioop.max(data, 2) > 600:
-                board.led.state = Led.ON
+                led_on(board)
                 play_wav(os.path.expanduser(config_sound))
-                board.led.state = Led.OFF
+                led_off(board)
                 while l:
                     l,data = inp.read()
         time.sleep(.001)
