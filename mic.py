@@ -38,7 +38,7 @@ inp.setformat(alsaaudio.PCM_FORMAT_S16_LE)
 
 # The period size controls the internal number of frames per period.
 # The significance of this parameter is documented in the ALSA api.
-# For our purposes, it is suficcient to know that reads from the device
+# For our purposes, it is sufficient to know that reads from the device
 # will return this many frames. Each frame being 2 bytes long.
 # This means that the reads below will return either 320 bytes of data
 # or 0 bytes of data. The latter is possible because we are in nonblocking
