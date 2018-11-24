@@ -13,6 +13,11 @@ from aiy.board import Board
 from led import *
 
 
+def trigger():
+    led_on(board)
+    play_wav(os.path.expanduser(config_sound))
+    led_off(board)
+
 
 # Config block
 print("Reading Config")
@@ -45,7 +50,10 @@ inp.setformat(alsaaudio.PCM_FORMAT_S16_LE)
 # mode.
 inp.setperiodsize(800)
 board = Board()
+board.button.when_pressed = trigger
+
 led_blink(board, 0.5, 2)
+
 counter = 0
 while True:
         # Read data from device
@@ -56,9 +64,7 @@ while True:
                 counter += 1
                 if counter >= config_noise_length_threshold * 10:
                     counter /= 2
-                    led_on(board)
-                    play_wav(os.path.expanduser(config_sound))
-                    led_off(board)
+                    trigger()
                     while l:
                        l,data = inp.read()
             else:
